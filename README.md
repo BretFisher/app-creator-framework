@@ -125,3 +125,18 @@ Before taking on the ACF for implementation, you should meet some requirements. 
 - In Notion, enable GitHub MCP for each App Creator, which requires a GitHub fine-grained PAT for the user to store in Notion.
 - In Notion, enable the Claude or Cursor [Custom Agent](https://www.notion.com/blog/introducing-custom-agents) for each App Creator. Connect it to the GitHub repos for their projects. Notion can have many Custom Agents, but Claude/Cursor are special external Agents. Claude uses [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) but is hosted by Notion and is part of Notion AI credits ([more info](https://www.notion.com/help/guides/how-to-set-up-claude-agents-on-your-teams-notion-task-board#how-do-external-agents-work-in-notion)). The Cursor one is hosted by Cursor and requires a Cursor subscription. Both provide full development abilities via cloud sandboxes.
 - Org-managed Notion Skills and MCPs, enabled for App Creators Notion accounts.
+
+# Developing This Repo
+
+## Testing the App Creator skills
+
+The App Creator skills are conversations, so they are tested by simulation. A persona file describes a fictional App Creator with hidden facts and a list of expected outcomes. A driver script runs two `claude -p` sessions, one running the skill and one playing the persona, and relays messages between them.
+
+```
+make test-app-idea                       # runs persona hr-onboarding-tracker, writes iteration-1
+make test-app-idea PERSONA=x ITERATION=2 # another persona, another iteration
+```
+
+Outputs land in `skills/app-creator/app-idea-workspace/iteration-N/<persona>/`: `transcript.md`, `turns.jsonl` (cost and timing per call), and `brief/` with the Project Brief the skill wrote. Grade the run against the persona's "Expected outcomes" section and record it in `grading.md` next to the transcript.
+
+The simulated agent works in a throwaway directory outside this repo and has no git access, so it cannot branch, commit, or push here.
